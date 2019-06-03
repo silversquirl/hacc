@@ -4,7 +4,7 @@
 #include "except.h"
 
 void do_error(void) {
-	cexcept_throw("myException", "Hi! I'm an exception!", NULL);
+	throw("myException", "Hi! I'm an exception!", NULL);
 }
 
 int main() {
