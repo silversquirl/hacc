@@ -20,14 +20,10 @@ void _cexcept_done(void);
 #define _cexcept_checkpoint(e) (!!setjmp(*_cexcept_push(e)))
 
 #define try \
-	for ( \
-		struct { _Bool flag; struct exception e; } _cexcept_try = {0}; \
-		!_cexcept_try.flag; \
-		_cexcept_try.flag = 1, _cexcept_done() \
-	) \
-		if (!_cexcept_checkpoint(&_cexcept_try.e))
-#define except(exception_name) else if (!strcmp(_cexcept_try.e.name, exception_name))
-#define captured_exception (_cexcept_try.e)
+	for (_Bool _cexcept_flag = 1; _cexcept_flag;) \
+		for (struct exception captured_exception; _cexcept_flag; _cexcept_flag = 0, _cexcept_done()) \
+			if (!_cexcept_checkpoint(&captured_exception))
+#define except(exception_name) else if (!strcmp(captured_exception.name, exception_name))
 
 EXCEPT_NORETURN void throw(const char *name, const char *msg, void *data);
 
